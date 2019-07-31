@@ -31,7 +31,7 @@ public class Core
         System.out.println("Status "+id[i]+":"+con.getResponseCode()+con.getResponseMessage());
         if(con.getResponseCode()==200)
             i++;
-        Thread.sleep(32000);
+        Thread.sleep(41000);
         }
     }
     public static void getId() throws IOException
@@ -40,7 +40,8 @@ public class Core
             FileReader in=new FileReader(new File("id"));
             StringBuilder sb=new StringBuilder();
             char x;
-            byte cx=0,index=0;
+            byte cx=0;
+            int index=0;
             while((x=(char)in.read())!='\uffff')
             {
                 sb.append(x);
