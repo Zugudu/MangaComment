@@ -5,17 +5,66 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
 
 public class Core
 {
-    public static void main(String args[]) throws MalformedURLException, IOException
+    public static HttpURLConnection con;
+    public static byte[]mes;
+    public static OutputStream out;
+    public static String[]token,id;
+    public static void main(String args[]) throws MalformedURLException, IOException, InterruptedException
     {
-        String[]token=getToken();
-        String id="28730";
-        byte[]mes=("{\"post_id\":\""+id+"\",\"post_type\":\"chapter\",\"post_page\":1,\"parent_comment\":null,\"comment\":\"Переводчик. Молодец. Молодец.<br>\"}").getBytes("utf-8");
-        HttpURLConnection con=(HttpURLConnection) new URL("https://mangalib.me/api/comments").openConnection();
+        getId();
+        token=getToken();
         
+        for(byte i=0;i<id.length;)
+        {
+        mes=("{\"post_id\":\""+id[i]+"\",\"post_type\":\"chapter\",\"post_page\":1,\"parent_comment\":null,\"comment\":\"Переводчик. Молодец. Молодец.<br>\"}").getBytes("utf-8");
+        connect();
+        out.write(mes, 0, mes.length);
+        out.flush();
+        out.close();
+        con.disconnect();
+        
+        System.out.println("Status "+id[i]+":"+con.getResponseCode()+con.getResponseMessage());
+        if(con.getResponseCode()==200)
+            i++;
+        Thread.sleep(32000);
+        }
+    }
+    public static void getId() throws IOException
+    {
+        try {
+            FileReader in=new FileReader(new File("id"));
+            StringBuilder sb=new StringBuilder();
+            char x;
+            byte cx=0,index=0;
+            while((x=(char)in.read())!='\uffff')
+            {
+                sb.append(x);
+                if(x=='\n')
+                    cx++;
+            }
+            in.close();
+            id=new String[cx];
+            char[]ids=sb.toString().toCharArray();
+            for(short i=0;i<cx;i++)
+            {
+                sb=new StringBuilder();
+                while((x=ids[index++])!='\n')
+                    sb.append(x);
+                id[i]=sb.toString();
+            }
+        } catch (FileNotFoundException ex) {
+            System.out.println("FNF id");
+            System.exit(0);
+        }
+    }
+    public static void connect() throws ProtocolException, IOException
+    {
+        con=(HttpURLConnection) new URL("https://mangalib.me/api/comments").openConnection();
         con.setRequestMethod("POST");
         con.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:68.0) Gecko/20100101 Firefox/68.0");
         con.setRequestProperty("Content-Type", "application/json;charset=utf-8");
@@ -24,16 +73,8 @@ public class Core
         con.setRequestProperty("X-XSRF-TOKEN", token[1]);
         con.setRequestProperty("Cookie", "mangalib_session="+token[2]);
         con.setRequestProperty("Content-Length", mes.length+"");
-        
         con.setDoOutput(true);
-        
-        OutputStream out=con.getOutputStream();
-        
-        out.write(mes, 0, mes.length);
-        out.flush();
-        out.close();
-        
-        System.out.println("Status:"+con.getResponseCode()+'\n'+con.getResponseMessage());
+        out=con.getOutputStream();
     }
     public static String[] getToken() throws IOException
     {
