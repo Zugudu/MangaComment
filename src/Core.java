@@ -40,8 +40,7 @@ public class Core
             FileReader in=new FileReader(new File("id"));
             StringBuilder sb=new StringBuilder();
             char x;
-            byte cx=0;
-            int index=0;
+            int index=0,cx=0;
             while((x=(char)in.read())!='\uffff')
             {
                 sb.append(x);
