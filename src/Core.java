@@ -21,7 +21,7 @@ public class Core
         
         for(byte i=0;i<id.length;)
         {
-        mes=("{\"post_id\":\""+id[i]+"\",\"post_type\":\"chapter\",\"post_page\":1,\"parent_comment\":null,\"comment\":\"Переводчик. Молодец. Молодец.<br>\"}").getBytes("utf-8");
+        mes=("{\"post_id\":\""+id[i]+"\",\"post_type\":\"chapter\",\"post_page\":1,\"parent_comment\":null,\"comment\":\"Ну что же, начнем<br>\"}").getBytes("utf-8");
         connect();
         out.write(mes, 0, mes.length);
         out.flush();
